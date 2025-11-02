@@ -1,0 +1,120 @@
+version: "3.9"
+
+services:
+  matchmaking-service:
+    build:
+      context: ./Service
+      dockerfile: Dockerfile
+    container_name: matchmaking-service
+    restart: on-failure
+    depends_on:
+      - kafka
+      - redis
+    environment:
+      DOTNET_ENVIRONMENT: Testing
+      Kafka__BootstrapServers: "kafka:9092"
+      Kafka__MatchmakingRequestsTopic: "matchmaking.request.test"
+      Kafka__CompletedMatchesTopic: "matchmaking.completed.test"
+      Kafka__ConsumerGroup: "matchmaking-service"
+      Kafka__ConsumerConfig__enable.auto.commit: "false"
+      Kafka__ConsumerConfig__auto.offset.reset: "earliest"
+      Kafka__ConsumerConfig__max.poll.interval.ms: "300000" # 300 sec
+      Kafka__ConsumerConfig__session.timeout.ms: "45000"   # 45 sec
+      Kafka__ConsumerConfig__heartbeat.interval.ms: "15000" # 15 sec
+      Kafka__ProducerConfig__acks: "all"
+      Kafka__ProducerConfig__max.in.flight.requests.per.connection: "5"
+      Kafka__ProducerConfig__retries: "10"
+      Kafka__ProducerConfig__linger.ms: "5"
+      Kafka__ProducerConfig__batch.size: "32768" # 32 KB
+      Kafka__ProducerConfig__compression.type: "lz4"
+      Redis__ConnectionString: "redis:6379"
+    ports:
+      - "8080:8080"
+
+  matchmaking-worker:
+    build:
+      context: ./Worker
+      dockerfile: Dockerfile
+    restart: on-failure
+    depends_on:
+      - kafka
+      - redis
+    environment:
+      DOTNET_ENVIRONMENT: Testing
+      MatchOptions__UsersRequired: 3
+      Kafka__BootstrapServers: "kafka:9092"
+      Kafka__ConsumerGroup: "matchmaking-worker"
+      Kafka__MatchmakingRequestTopic: "matchmaking.request.test"
+      Kafka__MatchmakingCompleteTopic: "matchmaking.completed.test"
+      Kafka__ConsumerConfig__enable.auto.commit: "false"
+      Kafka__ConsumerConfig__auto.offset.reset: "earliest"
+      Kafka__ConsumerConfig__max.poll.interval.ms: "300000" # 300 sec
+      Kafka__ConsumerConfig__session.timeout.ms: "45000"   # 45 sec
+      Kafka__ConsumerConfig__heartbeat.interval.ms: "15000" # 15 sec
+      Kafka__ProducerConfig__acks: "all"
+      Kafka__ProducerConfig__max.in.flight.requests.per.connection: "5"
+      Kafka__ProducerConfig__retries: "10"
+      Kafka__ProducerConfig__linger.ms: "5"
+      Kafka__ProducerConfig__batch.size: "32768" # 32 KB
+      Kafka__ProducerConfig__compression.type: "lz4"
+      Redis__ConnectionString: "redis:6379"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.1
+    container_name: zookeeper
+    restart: on-failure
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    container_name: kafka
+    restart: on-failure
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_MIN_INSYNC_REPLICAS: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+
+  init-kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    depends_on:
+      - kafka
+    entrypoint: /bin/sh
+    command: -c "
+      echo 'Waiting for Kafka to be ready...';
+      until kafka-topics --bootstrap-server kafka:9092 --list >/dev/null 2>&1; do
+        sleep 2;
+      done;
+      echo 'Creating Kafka topics...';
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic matchmaking.request.test --replication-factor 1 --partitions 4;
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic matchmaking.completed.test --replication-factor 1 --partitions 4;
+      echo 'Successfully created topics:';
+      kafka-topics --bootstrap-server kafka:9092 --list;"
+
+  redis:
+    image: redis:7.4
+    container_name: redis
+    restart: on-failure
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:
