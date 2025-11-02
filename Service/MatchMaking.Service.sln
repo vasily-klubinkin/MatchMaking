@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatchMaking.Service.Host", "src\MatchMaking.Service.Host\MatchMaking.Service.Host.csproj", "{0A25FACD-8053-457D-B0CB-151D429B281C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatchMaking.Service.Application", "src\MatchMaking.Service.Application\MatchMaking.Service.Application.csproj", "{D9C57E17-2D6F-41E0-8E73-8F28AC42F9BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatchMaking.Service.Infra", "src\MatchMaking.Service.Infra\MatchMaking.Service.Infra.csproj", "{80E0ABD7-73E8-4336-8F28-343AB1D6CF81}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0A25FACD-8053-457D-B0CB-151D429B281C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A25FACD-8053-457D-B0CB-151D429B281C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A25FACD-8053-457D-B0CB-151D429B281C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A25FACD-8053-457D-B0CB-151D429B281C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9C57E17-2D6F-41E0-8E73-8F28AC42F9BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9C57E17-2D6F-41E0-8E73-8F28AC42F9BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9C57E17-2D6F-41E0-8E73-8F28AC42F9BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9C57E17-2D6F-41E0-8E73-8F28AC42F9BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80E0ABD7-73E8-4336-8F28-343AB1D6CF81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80E0ABD7-73E8-4336-8F28-343AB1D6CF81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80E0ABD7-73E8-4336-8F28-343AB1D6CF81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80E0ABD7-73E8-4336-8F28-343AB1D6CF81}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
