@@ -18,12 +18,12 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddInfra(this IServiceCollection services, IConfiguration configuration)
     {
         var redisOptions = configuration.GetSection(RedisOptions.SectionName).Get<RedisOptions>();
-        services.AddSingleton(redisOptions);
+        services.AddSingleton(redisOptions!);
         
         var kafkaOptions = configuration.GetSection(KafkaOptions.SectionName).Get<KafkaOptions>();
-        services.AddSingleton(kafkaOptions);
+        services.AddSingleton(kafkaOptions!);
         
-        services.AddSingleton<IConnectionMultiplexer>(_=> ConnectionMultiplexer.Connect(redisOptions.ConnectionString));
+        services.AddSingleton<IConnectionMultiplexer>(_=> ConnectionMultiplexer.Connect(redisOptions!.ConnectionString));
         
         services.AddSingleton<IUsersQueueRepository, UsersQueueRedisRepository>();
         services.AddSingleton<IFormedMatchesRepository, FormedMatchesRedisRepository>();

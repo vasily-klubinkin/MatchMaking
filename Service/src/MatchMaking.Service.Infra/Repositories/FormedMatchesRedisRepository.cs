@@ -22,33 +22,40 @@ internal class FormedMatchesRedisRepository : IFormedMatchesRepository
 {
     private readonly IDatabase _db;
     private static readonly TimeSpan _ttl = TimeSpan.FromDays(30);
-
+    
+    private const string FORMED_MATCHES_KEY = "formed_matches";
+    private const string USER_MATCHES_KEY = "user_matches";
+    
+    
     public FormedMatchesRedisRepository(IConnectionMultiplexer multiplexer)
     {
         _db = multiplexer.GetDatabase();
     }
 
-    public async Task AddMatch(FormedMatch formedMatch)
+    public async Task AddMatch(FormedMatch formedMatch, CancellationToken cancellationToken)
     {
-        var matchKey = $"formed_match:{formedMatch.MatchId}";
+        var matchKey = $"{FORMED_MATCHES_KEY}:{formedMatch.MatchId}";
         var userIds = formedMatch.UserIds.Select(u => (RedisValue)u).ToArray();
 
+        cancellationToken.ThrowIfCancellationRequested();
         await _db.SetAddAsync(matchKey, userIds);
+        
         await _db.KeyExpireAsync(matchKey, _ttl);
-
+        cancellationToken.ThrowIfCancellationRequested();
+        
         var tasks = formedMatch.UserIds
-            .Select(u => _db.StringSetAsync($"user_match:{u}", formedMatch.MatchId, _ttl));
-
-        await Task.WhenAll(tasks);
+            .Select(u => _db.StringSetAsync($"{USER_MATCHES_KEY}:{u}", formedMatch.MatchId, _ttl));
+        
+        await Task.WhenAll(tasks).WaitAsync(cancellationToken);
     }
 
     public async Task<FormedMatch?> GetUserMatch(string userId)
     {
-        var matchId = await _db.StringGetAsync($"user_match:{userId}");
+        var matchId = await _db.StringGetAsync($"{USER_MATCHES_KEY}:{userId}");
         if (matchId.IsNullOrEmpty)
             return null;
 
-        var userSetKey = $"formed_match:{matchId}";
+        var userSetKey = $"{FORMED_MATCHES_KEY}:{matchId}";
         var userIds = await _db.SetMembersAsync(userSetKey);
 
         return userIds.Length == 0

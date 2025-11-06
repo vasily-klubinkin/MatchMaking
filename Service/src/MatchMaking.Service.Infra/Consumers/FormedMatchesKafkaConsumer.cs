@@ -24,9 +24,9 @@ public class FormedMatchesKafkaConsumer : KafkaConsumerBase<FormedMatch, string,
         return value;
     }
 
-    protected override async Task<bool> HandleMessageAsync(FormedMatch message)
+    protected override async Task<bool> HandleMessageAsync(FormedMatch message, CancellationToken cancellationToken)
     {
-        await _formedMatchesService.AddAsync(message);
+        await _formedMatchesService.AddAsync(message, cancellationToken);
         
         return true;
     }

@@ -4,6 +4,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <WarningsAsErrors>Nullable</WarningsAsErrors>
         <UserSecretsId>dotnet-MatchMaking.Worker.Host-384d5a3a-42e9-4ced-ad5f-c08b8688c177</UserSecretsId>
     </PropertyGroup>
 

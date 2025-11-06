@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddInfra(this IServiceCollection services, IConfiguration configuration)
     {
         var kafkaOptions = configuration.GetSection(KafkaOptions.SectionName).Get<KafkaOptions>();
-        services.AddSingleton(kafkaOptions);
+        services.AddSingleton(kafkaOptions!);
 
         services.AddSingleton<IUserQueuesRepository, UserQueuesInMemoryRepository>();
 

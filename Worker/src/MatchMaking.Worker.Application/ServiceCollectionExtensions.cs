@@ -11,7 +11,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
         var matchOptions = configuration.GetSection(MatchOptions.SectionName).Get<MatchOptions>();
-        services.AddSingleton(matchOptions);
+        services.AddSingleton(matchOptions!);
         
         services.AddSingleton<IMatchmakingService, MatchmakingService>();
         services.Decorate<IMatchmakingService, ParallelMatchmakingServiceDecorator>();

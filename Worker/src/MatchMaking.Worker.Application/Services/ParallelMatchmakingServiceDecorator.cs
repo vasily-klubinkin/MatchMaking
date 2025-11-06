@@ -21,16 +21,17 @@ internal class ParallelMatchmakingServiceDecorator : IMatchmakingService, IDispo
         _logger = logger;
     }
 
-    public Task<FormedMatch?> HandleMatchmakingRequestAsync(MatchmakingRequest request)
+    public Task<FormedMatch?> HandleMatchmakingRequestAsync(MatchmakingRequest request, CancellationToken cancellationToken)
     {
         var block = _blocks.GetOrAdd(request.QueueId, up =>
         {
             return new ActionBlock<MatchmakingRequestWithTcs>(
-                async rwt => await ProcessRequestAsync(rwt),
+                async rwt => await ProcessRequestAsync(rwt, cancellationToken),
                 new ExecutionDataflowBlockOptions
                 {
                     MaxDegreeOfParallelism = 1,
-                    EnsureOrdered = true
+                    EnsureOrdered = true,
+                    CancellationToken = cancellationToken
                 });
         });
 
@@ -39,12 +40,16 @@ internal class ParallelMatchmakingServiceDecorator : IMatchmakingService, IDispo
         return tcs.Task;
     }
 
-    private async Task ProcessRequestAsync(MatchmakingRequestWithTcs rwt)
+    private async Task ProcessRequestAsync(MatchmakingRequestWithTcs rwt, CancellationToken cancellationToken)
     {
         try
         {
-            var result = await _inner.HandleMatchmakingRequestAsync(rwt.Request);
+            var result = await _inner.HandleMatchmakingRequestAsync(rwt.Request, cancellationToken);
             rwt.Tcs.SetResult(result);
+        }
+        catch (TaskCanceledException)
+        {
+            rwt.Tcs.SetCanceled(cancellationToken);
         }
         catch (Exception ex)
         {

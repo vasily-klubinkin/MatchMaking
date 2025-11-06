@@ -7,5 +7,5 @@ public class RedisOptions
     public const string SectionName = "Redis"; 
     
     [Required]
-    public string ConnectionString { get; init; }
+    public required string ConnectionString { get; init; }
 }

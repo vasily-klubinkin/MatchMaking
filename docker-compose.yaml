@@ -41,7 +41,7 @@ services:
       - redis
     environment:
       DOTNET_ENVIRONMENT: Testing
-      MatchOptions__UsersRequired: 3
+      MatchOptions__RequiredUsersCount: 3
       Kafka__BootstrapServers: "kafka:9092"
       Kafka__ConsumerGroup: "matchmaking-worker"
       Kafka__MatchmakingRequestTopic: "matchmaking.request.test"

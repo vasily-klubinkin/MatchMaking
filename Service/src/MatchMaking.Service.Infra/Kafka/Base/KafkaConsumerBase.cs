@@ -24,18 +24,13 @@ public abstract class KafkaConsumerBase<TDomain, TKey, TValue> : BackgroundServi
     }
 
     protected abstract TDomain CreateMessage(TKey key, TValue value);
-    protected abstract Task<bool> HandleMessageAsync(TDomain message);
+    protected abstract Task<bool> HandleMessageAsync(TDomain message, CancellationToken cancellationToken);
     
     
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Task.Factory.StartNew(
-                              () => RunConsumerLoopAsync(stoppingToken),
-                              stoppingToken,
-                              TaskCreationOptions.LongRunning,
-                              TaskScheduler.Default);
-        return Task.CompletedTask;
+        await RunConsumerLoopAsync(stoppingToken);
     }
     
     private async Task RunConsumerLoopAsync(CancellationToken stoppingToken)
@@ -75,7 +70,7 @@ public abstract class KafkaConsumerBase<TDomain, TKey, TValue> : BackgroundServi
                         continue;
                     }
 
-                    var commit = await HandleMessageAsync(message!);
+                    var commit = await HandleMessageAsync(message!, stoppingToken);
                     if (commit) _consumer.Commit(result);
                 }
                 catch (ConsumeException ex)

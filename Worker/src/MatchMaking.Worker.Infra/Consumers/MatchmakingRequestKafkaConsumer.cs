@@ -26,9 +26,9 @@ internal class MatchmakingRequestKafkaConsumer : KafkaConsumerBase<MatchmakingRe
         return new MatchmakingRequest(value, originalMessage.Partition.Value);
     }
 
-    protected override async Task<bool> HandleMessageAsync(MatchmakingRequest message)
+    protected override async Task<bool> HandleMessageAsync(MatchmakingRequest message, CancellationToken cancellationToken)
     {
-        var formedMatch = await _service.HandleMatchmakingRequestAsync(message);
+        var formedMatch = await _service.HandleMatchmakingRequestAsync(message, cancellationToken);
         
         return formedMatch is not null;
     }

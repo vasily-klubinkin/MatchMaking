@@ -15,11 +15,11 @@ public class FormedMatchesService : IFormedMatchesService
         _usersQueueRepository = usersQueueRepository;
     }
 
-    public async Task AddAsync(FormedMatch formedMatch)
+    public async Task AddAsync(FormedMatch formedMatch, CancellationToken cancellationToken)
     {
-        await _formedMatchesRepository.AddMatch(formedMatch);
+        await _formedMatchesRepository.AddMatch(formedMatch, cancellationToken);
         
-        await _usersQueueRepository.ClearUsersInQueue(formedMatch.UserIds);
+        await _usersQueueRepository.ClearUsersInQueue(formedMatch.UserIds, cancellationToken);
     }
 
     public Task<FormedMatch?> Get(string userId)

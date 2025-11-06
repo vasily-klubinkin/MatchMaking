@@ -21,9 +21,9 @@ internal class UsersQueueRedisRepository : IUsersQueueRepository
     public Task AddUserToQueue(string userId) =>
         _db.SetAddAsync("users_queue", userId);
 
-    public Task ClearUsersInQueue(ICollection<string> userIds)
+    public Task ClearUsersInQueue(ICollection<string> userIds, CancellationToken cancellationToken)
     {
         var tasks = userIds.Select(u => _db.SetRemoveAsync("users_queue", u));
-        return Task.WhenAll(tasks);
+        return Task.WhenAll(tasks).WaitAsync(cancellationToken);
     }
 }

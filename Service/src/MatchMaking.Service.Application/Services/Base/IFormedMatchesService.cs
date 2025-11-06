@@ -4,6 +4,6 @@ namespace MatchMaking.Service.Application.Services.Base;
 
 public interface IFormedMatchesService
 {
-    Task AddAsync(FormedMatch formedMatch);
+    Task AddAsync(FormedMatch formedMatch, CancellationToken cancellationToken);
     Task<FormedMatch?> Get(string userId);
 }

@@ -30,23 +30,23 @@ public class MatchmakingService : IMatchmakingService
     }
     
     // next improvement point will be to parallelize it by UserProps
-    public async Task<FormedMatch?> HandleMatchmakingRequestAsync(MatchmakingRequest request)
+    public async Task<FormedMatch?> HandleMatchmakingRequestAsync(MatchmakingRequest request, CancellationToken cancellationToken)
     {
         var currentWaitingUsersCount = await _userQueuesRepository.GetUsersCountAsync(request.QueueId);
         
         // queue is too small, need to w8 more users to join
-        if (currentWaitingUsersCount + 1 < _matchOptions.UsersRequired)
+        if (currentWaitingUsersCount + 1 < _matchOptions.RequiredUsersCount)
         {
             await _userQueuesRepository.EnqueueUserAsync(request.QueueId, request.UserId);
             return null;
         }
         
-        var waitingUsers = await _userQueuesRepository.DequeueUsersAsync(request.QueueId, _matchOptions.UsersRequired - 1);
+        var waitingUsers = await _userQueuesRepository.DequeueUsersAsync(request.QueueId, _matchOptions.RequiredUsersCount - 1);
         waitingUsers.Add(request.UserId);
         
         var formedMatch = new FormedMatch(Guid.NewGuid().ToString("N"), waitingUsers);
         
-        await _formedMatchesPublisher.PublishAsync(formedMatch);
+        await _formedMatchesPublisher.PublishAsync(formedMatch, cancellationToken);
         
         _logger.LogInformation("Match formed succesfully. MatchId: {matchId}", formedMatch.MatchId);
         

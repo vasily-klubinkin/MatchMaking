@@ -22,12 +22,14 @@ public class MatchmakingService : IMatchmakingService
         _logger = logger;
     }
 
-    public async Task SearchMatchForUser(string userId)
+    public async Task SearchMatchForUser(string userId, CancellationToken cancellationToken)
     {
         var isUserInQueue = await _usersQueueRepository.IsUserInQueue(userId);
         if (isUserInQueue) return;
-        
-        await _matchmakingRequestsPublisher.PublishAsync(new MatchmakingRequest(userId, GenerateRandomUserProps(userId)));
+
+        await
+            _matchmakingRequestsPublisher.PublishAsync(new MatchmakingRequest(userId, GenerateRandomUserProps(userId)),
+                                                       cancellationToken);
         
         // possible duplicates in kafka, but it is expected
         await _usersQueueRepository.AddUserToQueue(userId);

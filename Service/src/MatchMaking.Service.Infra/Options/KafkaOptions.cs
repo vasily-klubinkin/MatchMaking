@@ -7,16 +7,16 @@ public class KafkaOptions
     public const string SectionName = "Kafka";
     
     [Required]
-    public string BootstrapServers { get; init; }
+    public required string BootstrapServers { get; init; }
     
     [Required]
-    public string MatchmakingRequestsTopic { get; init; }
+    public required string MatchmakingRequestsTopic { get; init; }
 
     [Required]
-    public string CompletedMatchesTopic { get; init; }
+    public required string CompletedMatchesTopic { get; init; }
     
     [Required]
-    public string ConsumerGroup { get; set; }
+    public required string ConsumerGroup { get; set; }
     
     public Dictionary<string, string>? ConsumerConfig { get; init; }
 

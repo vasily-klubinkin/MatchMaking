@@ -26,7 +26,7 @@ public abstract class KafkaPublisherBase<TDomain, TKey, TValue> : IMessagePublis
     protected abstract TKey GetKey(TDomain value);
     protected abstract TValue GetValue(TDomain value);
     
-    public async Task PublishAsync(TDomain message)
+    public async Task PublishAsync(TDomain message, CancellationToken cancellationToken)
     {
         try
         {
@@ -35,7 +35,7 @@ public abstract class KafkaPublisherBase<TDomain, TKey, TValue> : IMessagePublis
 
             var kafkaMessage = new Message<string, string> { Key = key, Value = value };
 
-            var deliveryResult = await _producer.ProduceAsync(_topic, kafkaMessage);
+            var deliveryResult = await _producer.ProduceAsync(_topic, kafkaMessage, cancellationToken);
 
             _logger.LogInformation("Message published to {Topic} [Partition={Partition}, Offset={Offset}]",
                                    deliveryResult.Topic, deliveryResult.Partition, deliveryResult.Offset);

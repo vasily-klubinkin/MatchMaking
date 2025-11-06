@@ -6,5 +6,5 @@ public interface IUsersQueueRepository
 
     Task AddUserToQueue(string userId);
     
-    Task ClearUsersInQueue(ICollection<string> userIds);
+    Task ClearUsersInQueue(ICollection<string> userIds, CancellationToken cancellationToken);
 }

@@ -18,9 +18,11 @@ public class MatchesController : ControllerBase
     }
 
     [HttpPut("search")]
-    public async Task<IActionResult> SearchMatchesForUser([FromHeader(Name = HeaderNames.UserIdHeaderName)] string userId)
+    public async Task<IActionResult> SearchMatchesForUser(
+        [FromHeader(Name = HeaderNames.UserIdHeaderName)] string userId,
+        CancellationToken cancellationToken)
     {
-        await _matchmakingService.SearchMatchForUser(userId);
+        await _matchmakingService.SearchMatchForUser(userId, cancellationToken);
         
         return Ok();
     }
