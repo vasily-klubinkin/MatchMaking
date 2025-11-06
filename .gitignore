@@ -1,0 +1,120 @@
+# =========================
+# macOS
+# =========================
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# =========================
+# .NET / Visual Studio
+# =========================
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Mono / Xamarin
+*.userprefs
+mono_crash.*
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+artifacts/
+project.lock.json
+project.fragment.lock.json
+
+# Visual Studio caches
+.vs/
+Generated\ Files/
+
+# Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.VisualState.xml
+TestResult.xml
+
+# Profiling / coverage
+*.coverage
+*.coveragexml
+*.psess
+*.vsp
+*.vspx
+*.sap
+*.binlog
+
+# StyleCop / ReSharper
+StyleCopReport.xml
+_ReSharper*/
+*.DotSettings.user
+
+# Others
+*.tmp
+*.log
+*.pdb
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.ipdb
+*.iobj
+*.pch
+*.rsp
+*.cachefile
+*.svclog
+*.dbmdl
+*.dbproj.schemaview
+~$*
+*~
+*.snk
+node_modules/
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nupkg
+*.nuget.props
+*.nuget.targets
+
+# =========================
+# Rider / JetBrains IDE
+# =========================
+.idea/
+*.sln.iml
+out/
+.idea/**/caches/
+.idea/**/localHistory/
+.idea/**/tasks.xml
+.idea/**/workspace.xml
+.idea/**/dictionaries/
+.idea/**/shelf/
+.idea/**/usage.statistics.xml
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+
+# Rider / ReSharper caches
+_ReSharper*/
+*.DotSettings.user
+
+# =========================
+# Misc
+# =========================
+*.tmp
+*.log
